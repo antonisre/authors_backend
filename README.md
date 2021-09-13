@@ -19,3 +19,6 @@
 
 ### db migrations can be found under src/migrations
 
+
+## test are placed inside test folder and can be simply started with "npm test"
+
