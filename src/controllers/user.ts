@@ -10,12 +10,12 @@ import { defaultUserRole } from '../config/constants';
 export const signup = async (req: Request, res: Response) => {
     try {
         const { firstName, lastName, email, password } = req.body;
-        const newUserAdapter = userAdapter({ firstName, lastName, email, password });
+        const newUserAdapter = userAdapter();
 
-        const existingUser = await userUseCases.findByEmail(newUserAdapter);
+        const existingUser = await userUseCases.findByEmail(newUserAdapter).execute(email);
         if (existingUser.length > 0) throw { message: "Email address has already been taken", statusCode: StatusCodes.CONFLICT }
 
-        const newUser = await userUseCases.userSignup(newUserAdapter);
+        const newUser = await userUseCases.userSignup(newUserAdapter).execute({ firstName, lastName, email, password });
         const token = generateToken(newUser.insertId, defaultUserRole);
 
         successResponse(res, { data: { user: {
@@ -34,12 +34,12 @@ export const signup = async (req: Request, res: Response) => {
 export const signin = async (req: Request, res: Response) => {
     try {
         const { email, password } = req.body;
-        const newUserAdapter = userAdapter({ email, password });
-        const user = await userUseCases.findByEmail(newUserAdapter);
+        const newUserAdapter = userAdapter();
+        const user = await userUseCases.findByEmail(newUserAdapter).execute(email);
 
         if (user.length == 0) throw { message: "User not found", statusCode: StatusCodes.NOT_FOUND };
         if (!comparePasswords(password, user[0].password)) throw { message: "Wrong password" };
-
+     
         const token = generateToken(user[0].id, user[0].role);
 
         successResponse(res, { data: { user: { token }}});
@@ -54,7 +54,7 @@ export const deleteUser = async (req: Request, res: Response) => {
     try {
         const { id } = req.params.id;
         const newUserAdapter = userAdapter();
-        const user = await userUseCases.deleteUser(newUserAdapter);
+        await userUseCases.deleteUser(newUserAdapter).execute(id);
 
         successResponse(res, { data: {}});
 

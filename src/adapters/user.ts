@@ -2,14 +2,14 @@ import { IUser } from '../entities/user';
 import * as userDB from '../database/user';
 import { hashPassword } from '../utils/bcrypt';
 
-export interface IUserAdapter extends Partial<IUser> {
-    createUser(user: IUser),
+export interface IUserAdapter {
+    createUser(user: Partial<IUser>),
     findByEmail(email: string),
     deleteUser(id: number)
 }
 
-export const userAdapter = (user): IUserAdapter => ({
-    createUser: async () => {
+export const userAdapter = () => ({
+    createUser: async (user: Partial<IUser>) => {
         user.password = hashPassword(user.password);
         if (!user.password) throw { message: "Failed to hash password" };
 
@@ -21,11 +21,11 @@ export const userAdapter = (user): IUserAdapter => ({
         })
         return result;
     },
-    findByEmail: async () => {
-        const userData = await userDB.findByEmail(user.email);
+    findByEmail: async (email: string) => {
+        const userData = await userDB.findByEmail(email);
         return userData;
     },
-    deleteUser: async () => {
-        await userDB.deleteUser(user.id);
+    deleteUser: async (id: number) => {
+        await userDB.deleteUser(id);
     }
 })

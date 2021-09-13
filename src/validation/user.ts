@@ -15,9 +15,3 @@ export const validationSignin = {
         password: Joi.string().required(),
     })
 }
-
-export const validationDeleteUser = {
-    headers: Joi.object({
-        token: Joi.string().required(),
-    })
-}

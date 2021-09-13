@@ -1,7 +1,9 @@
 import { IUserAdapter } from '../../adapters/user';
+import { IUser } from '../../entities/user';
 
-export const userSignup = async (userAdapter: IUserAdapter) => {
-    const { firstName, lastName, password, role, email} = userAdapter;
-    return await userAdapter.createUser({ firstName, lastName, password, role, email });
-    
-}
+export const userSignup = (userAdapter: IUserAdapter) => ({
+    execute: async (user: Partial<IUser>) => {
+        const newUser = await userAdapter.createUser(user);
+        return newUser;
+    }
+})
