@@ -6,7 +6,8 @@ export const requireToken = (req: Request, res: Response, next: Next) => {
     const token = req.headers.token;
 
     try {
-        validateToken(token);
+        const tokenData = validateToken(token);
+        req.user = tokenData.data.id;
         next();
     } catch (err) {
         console.log(err);

@@ -14,6 +14,7 @@ export const createUser = async (user: Partial<IUser>): Promise<DatabaseSchemaRe
         return result;
     } catch (err) {
         console.log("Failed to create user", err);
+        throw { message: "Failed to create user" };
     }
 }
 
@@ -23,6 +24,7 @@ export const findByEmail = async (email: string): Promise<DatabaseSchemaResult> 
         return rows;
     } catch (err) {
         console.log("Failed to find user", err);
+        throw { message: "Failed to find user" };
     }
 }
 
@@ -31,10 +33,11 @@ export const deleteUser = async (id: number): Promise<void> => {
         await db.query("DELETE FROM Users where id = ?", [id]);
     } catch (err) {
         console.log("Failed to delete user", err);
+        throw { message: "Failed to delete user" };
     }
 }
 
-export const updateUser = async (user: Partial<IUser>): Promise<void> => {
+export const updateUser = async (user: Partial<IUser>) => {
     try {
         const values = [];
         let query = "UPDATE Users SET "
@@ -49,8 +52,10 @@ export const updateUser = async (user: Partial<IUser>): Promise<void> => {
         query = query + " WHERE id = ?";
         values.push(user.id);
      
-        await db.query(query, values);
+        const [rows] = await db.query(query, values);
+        return rows;
     } catch (err) {
         console.log("Failed to update user", err);
+        throw { message: "Failed to update user" };
     }
 }

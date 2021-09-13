@@ -11,7 +11,7 @@ export const addNewBook = async (req: Request, res: Response) => {
 
         successResponse(res, { data: { book: {
             ...req.body,
-            id: newBook.insertId
+            id: newBook?.insertId
         }}});
     } catch (err) {
         console.log(err);
@@ -46,7 +46,8 @@ export const deleteBook = async (req: Request, res: Response) => {
 export const updateBook = async (req: Request, res: Response) => {
     try {
         const newBookAdapter = bookAdapter();
-        await bookUseCases.updateBook(newBookAdapter).execute({...req.body, id: req.params.id });
+        const updateInfo = await bookUseCases.updateBook(newBookAdapter).execute({...req.body, id: req.params.id });
+        if (updateInfo.affectedRows == 0) throw { message: "Book not found!" };
 
         successResponse(res, { data: { book : { ...req.body }}});
     } catch (err) {

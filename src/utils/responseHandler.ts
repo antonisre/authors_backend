@@ -1,7 +1,7 @@
 
 import { StatusCodes } from 'http-status-codes';
 import { Response } from 'express';
-import { ResponseData } from '../types/interfaces';
+import { ResponseData } from '../types/params';
 
 export const successResponse = (response: Response, success: ResponseData): Response => {
     let { data, message, statusCode } = success; 

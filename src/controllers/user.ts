@@ -64,7 +64,8 @@ export const deleteUser = async (req: Request, res: Response) => {
 export const updateUser = async (req: Request, res: Response) => {
     try {
         const newUserAdapter = userAdapter();
-        await userUseCases.updateUser(newUserAdapter).execute({...req.body, id: req.params.id });
+        const updateInfo = await userUseCases.updateUser(newUserAdapter).execute({...req.body, id: req.params.id });
+        if (updateInfo.affectedRows == 0) throw { message: "User not found!" };
         delete req.body?.password;
 
         successResponse(res, { data: { user : { ...req.body }}});

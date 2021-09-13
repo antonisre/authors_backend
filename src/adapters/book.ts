@@ -24,7 +24,8 @@ export const bookAdapter = (): IBookAdapter => ({
     deleteBook: async (id: number) => {
         await bookDB.deleteBook(id);
     },
-    updateBook: async (book: Partial<IBook>): Promise<void> => {
-        await bookDB.updateBook(book);
+    updateBook: async (book: Partial<IBook>) => {
+        const updateInfo = await bookDB.updateBook(book);
+        return updateInfo;
     },
 })

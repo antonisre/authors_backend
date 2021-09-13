@@ -29,8 +29,9 @@ export const userAdapter = (): IUserAdapter => ({
     deleteUser: async (id: number) => {
         await userDB.deleteUser(id);
     },
-    updateUser: async (user: Partial<IUser>): Promise<void> => {
+    updateUser: async (user: Partial<IUser>) => {
         if (user.password) user.password = hashPassword(user.password);
-        await userDB.updateUser(user);
+        const updateInfo = await userDB.updateUser(user);
+        return updateInfo;
     },
 })

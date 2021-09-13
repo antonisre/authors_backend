@@ -6,12 +6,13 @@ export const createBook = async (book: Partial<IBook>): Promise<DatabaseSchemaRe
     const { title, published, authorId } = book;
 
     try {
-        const [result] = await db.query("INSERT INTO Users (title, published, authorId) VALUES(?, ?, ?)", 
+        const [result] = await db.query("INSERT INTO Books (title, published, authorId) VALUES(?, ?, ?)", 
             [title, published, authorId]
         );
         return result;
     } catch (err) {
         console.log("Failed to create book", err);
+        throw { message: "Failed to create book"};
     }
 }
 
@@ -21,6 +22,7 @@ export const findById = async (id: number): Promise<DatabaseSchemaResult> => {
         return rows;
     } catch (err) {
         console.log("Failed to find book", err);
+        throw { message: "Failed to find book"};
     }
 }
 
@@ -29,10 +31,11 @@ export const deleteBook = async (id: number): Promise<void> => {
         await db.query("DELETE FROM Books where id = ?", [id]);
     } catch (err) {
         console.log("Failed to delete book", err);
+        throw { message: "Failed to delete book"};
     }
 }
 
-export const updateBook = async (book: Partial<IBook>): Promise<void> => {
+export const updateBook = async (book: Partial<IBook>): Promise<DatabaseSchemaResult> => {
     try {
         const values = [];
         let query = "UPDATE Books SET "
@@ -47,8 +50,10 @@ export const updateBook = async (book: Partial<IBook>): Promise<void> => {
         query = query + " WHERE id = ?";
         values.push(book.id);
      
-        await db.query(query, values);
+        const [rows] = await db.query(query, values);
+        return rows;
     } catch (err) {
         console.log("Failed to update book", err);
+        throw { message: "Failed to update book"};
     }
 }
