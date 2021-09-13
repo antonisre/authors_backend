@@ -15,3 +15,12 @@ export const validationSignin = {
         password: Joi.string().required(),
     })
 }
+
+export const validationUpdateUser = {
+    body: Joi.object({
+        firstName: Joi.string(),
+        lastName: Joi.string(),
+        email: Joi.string().email(),
+        password: Joi.string(),
+    })
+}

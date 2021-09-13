@@ -33,3 +33,24 @@ export const deleteUser = async (id: number): Promise<void> => {
         console.log("Failed to delete user", err);
     }
 }
+
+export const updateUser = async (user: Partial<IUser>): Promise<void> => {
+    try {
+        const values = [];
+        let query = "UPDATE Users SET "
+        Object.keys(user).forEach(key => {
+            if (key !== "id" ) {
+                query = query + `${key} = ?,`
+                values.push(user[key])
+            }
+        })
+
+        query = query.replace(/,\s*$/, ""); //remove trailing comma
+        query = query + " WHERE id = ?";
+        values.push(user.id);
+     
+        await db.query(query, values);
+    } catch (err) {
+        console.log("Failed to update user", err);
+    }
+}

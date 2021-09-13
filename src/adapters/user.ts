@@ -5,7 +5,8 @@ import { hashPassword } from '../utils/bcrypt';
 export interface IUserAdapter {
     createUser(user: Partial<IUser>),
     findByEmail(email: string),
-    deleteUser(id: number)
+    deleteUser(id: number),
+    updateUser(user: Partial<IUser>)
 }
 
 export const userAdapter = () => ({
@@ -27,5 +28,9 @@ export const userAdapter = () => ({
     },
     deleteUser: async (id: number) => {
         await userDB.deleteUser(id);
-    }
+    },
+    updateUser: async (user: Partial<IUser>): Promise<void> => {
+        if (user.password) user.password = hashPassword(user.password);
+        await userDB.updateUser(user);
+    },
 })

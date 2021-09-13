@@ -24,7 +24,6 @@ export const signup = async (req: Request, res: Response) => {
             email,
             token
         }}});
-
     } catch (err) {
         console.log(err);
         errorResponse(res, err);
@@ -43,7 +42,6 @@ export const signin = async (req: Request, res: Response) => {
         const token = generateToken(user[0].id, user[0].role);
 
         successResponse(res, { data: { user: { token }}});
-
     } catch (err) {
         console.log(err);
         errorResponse(res, err);
@@ -57,7 +55,19 @@ export const deleteUser = async (req: Request, res: Response) => {
         await userUseCases.deleteUser(newUserAdapter).execute(id);
 
         successResponse(res, { data: {}});
+    } catch (err) {
+        console.log(err);
+        errorResponse(res, err);
+    }
+}
 
+export const updateUser = async (req: Request, res: Response) => {
+    try {
+        const newUserAdapter = userAdapter();
+        await userUseCases.updateUser(newUserAdapter).execute({...req.body, id: req.params.id });
+        delete req.body?.password;
+
+        successResponse(res, { data: { user : { ...req.body }}});
     } catch (err) {
         console.log(err);
         errorResponse(res, err);
