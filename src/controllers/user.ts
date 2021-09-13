@@ -5,6 +5,7 @@ import userUseCases from '../useCases/user';
 import { generateToken } from '../utils/tokenHandler';
 import { comparePasswords } from '../utils/bcrypt';
 import { StatusCodes } from 'http-status-codes';
+import { defaultUserRole } from '../config/constants';
 
 export const signup = async (req: Request, res: Response) => {
     try {
@@ -15,7 +16,7 @@ export const signup = async (req: Request, res: Response) => {
         if (existingUser.length > 0) throw { message: "Email address has already been taken", statusCode: StatusCodes.CONFLICT }
 
         const newUser = await userUseCases.userSignup(newUserAdapter);
-        const token = generateToken(newUser.insertId);
+        const token = generateToken(newUser.insertId, defaultUserRole);
 
         successResponse(res, { data: { user: {
             firstName,
@@ -39,9 +40,23 @@ export const signin = async (req: Request, res: Response) => {
         if (user.length == 0) throw { message: "User not found", statusCode: StatusCodes.NOT_FOUND };
         if (!comparePasswords(password, user[0].password)) throw { message: "Wrong password" };
 
-        const token = generateToken(user.insertId);
+        const token = generateToken(user[0].id, user[0].role);
 
         successResponse(res, { data: { user: { token }}});
+
+    } catch (err) {
+        console.log(err);
+        errorResponse(res, err);
+    }
+}
+
+export const deleteUser = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params.id;
+        const newUserAdapter = userAdapter();
+        const user = await userUseCases.deleteUser(newUserAdapter);
+
+        successResponse(res, { data: {}});
 
     } catch (err) {
         console.log(err);

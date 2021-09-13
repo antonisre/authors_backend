@@ -4,7 +4,8 @@ import { hashPassword } from '../utils/bcrypt';
 
 export interface IUserAdapter extends Partial<IUser> {
     createUser(user: IUser),
-    findByEmail(email: string)
+    findByEmail(email: string),
+    deleteUser(id: number)
 }
 
 export const userAdapter = (user): IUserAdapter => ({
@@ -23,5 +24,8 @@ export const userAdapter = (user): IUserAdapter => ({
     findByEmail: async () => {
         const userData = await userDB.findByEmail(user.email);
         return userData;
+    },
+    deleteUser: async () => {
+        await userDB.deleteUser(user.id);
     }
 })
