@@ -9,7 +9,7 @@ export interface IUserAdapter {
     updateUser(user: Partial<IUser>)
 }
 
-export const userAdapter = () => ({
+export const userAdapter = (): IUserAdapter => ({
     createUser: async (user: Partial<IUser>) => {
         user.password = hashPassword(user.password);
         if (!user.password) throw { message: "Failed to hash password" };
