@@ -9,20 +9,22 @@ import { defaultUserRole } from '../config/constants';
 
 export const signup = async (req: Request, res: Response) => {
     try {
-        const { firstName, lastName, email, password } = req.body;
+        let { firstName, lastName, email, password, role } = req.body;
         const newUserAdapter = userAdapter();
+        if(!role) role = defaultUserRole;
 
         const existingUser = await userUseCases.findByEmail(newUserAdapter).execute(email);
         if (existingUser.length > 0) throw { message: "Email address has already been taken", statusCode: StatusCodes.CONFLICT }
 
-        const newUser = await userUseCases.userSignup(newUserAdapter).execute({ firstName, lastName, email, password });
-        const token = generateToken(newUser.insertId, defaultUserRole);
+        const newUser = await userUseCases.userSignup(newUserAdapter).execute({ firstName, lastName, email, password, role });
+        const token = generateToken(newUser.insertId, role);
 
         successResponse(res, { data: { user: {
             firstName,
             lastName,
             email,
-            token
+            token,
+            id: newUser.insertId
         }}});
     } catch (err) {
         console.log(err);

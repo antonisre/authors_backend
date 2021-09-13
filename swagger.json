@@ -1,0 +1,537 @@
+  
+{
+    "swagger": "2.0",
+    "info": {
+      "title": "Authors",
+      "version": "1.0.0"
+    },
+    "schemes": [
+      "http",
+      "https"
+    ],
+    "host": "localhost:3000",
+    "basePath": "/",
+    "tags": [
+      {
+        "name": "Users",
+        "description": "User related routes"
+      },
+      {
+        "name": "Books",
+        "description": "Book related routes"
+      }
+    ],
+    "paths": {
+        "/user/signup": {
+            "post": {
+                "summary": "Creates new user and returns user data with token",
+                "tags": [
+                    "Users"
+                ],
+                "parameters": [
+                    {
+                    "name": "User Signup",
+                    "in": "body",
+                    "description": "user signup model",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/userSignup"
+                    }
+                }
+            ],
+            "responses": 
+                {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/signup"
+                        }
+                    },
+                    "400": {
+                        "description": "Not all data has been provided"
+                    },
+                    "409": {
+                        "description": "Email already in use"
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ]
+            }
+        },
+        "/user/signin": {
+            "post": {
+                "summary": "Use email and password to retrive token",
+                "tags": [
+                    "Users"
+                ],
+                "parameters": [
+                    {
+                        "name": "User signin",
+                        "in": "body",
+                        "description": "user signin model",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/userSignin"
+                        }
+                    }
+                ],
+                "responses": 
+                    {
+                        "200": {
+                            "description": "Success",
+                            "schema": {
+                                "$ref": "#/definitions/userSigninResponse"
+                            }
+                        },
+                        "400": {
+                            "description": "Missing email/password"
+                        },
+                        "404": {
+                            "description": "Wrong password/email"
+                        }
+                    },
+                "produces": [
+                    "application/json"
+                ]
+            }
+        },
+        "user/:id": {
+            "delete": {
+                "summary": "Delete user by id, requires admin privileges",
+                "tags": [
+                    "Users"
+                ],
+                "parameters": [
+                    {
+                    "name": "Delete user params",
+                    "in": "url",
+                    "description": "id of the user to delete",
+                    "required": true
+                }
+            ],
+            "responses": 
+                {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ]
+            }
+        },
+        "/user/:id": {
+            "put": {
+                "summary": "Update user data, requires admin privileges",
+                "tags": [
+                    "Users"
+                ],
+                "parameters": [
+                    {
+                        "name": "User Signup",
+                        "in": "body",
+                        "description": "user signup model",
+                        "required": false,
+                        "schema": {
+                            "$ref": "#/definitions/userSignup"
+                        }
+                    }
+            ],
+            "responses": 
+                {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/userSignupResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unathorized"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ]
+            }
+        },
+        "/book": {
+            "post": {
+                "summary": "Create new book API, author cannot have two same titled books",
+                "tags": [
+                    "Books"
+                ],
+                "parameters": [
+                    {
+                        "name": "User Signup",
+                        "in": "body",
+                        "description": "book model",
+                        "required": false,
+                        "schema": {
+                            "$ref": "#/definitions/createBook"
+                        }
+                }
+            ],
+            "responses": 
+                {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/createBookResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Not all data has been provided/ email taken"
+                    },
+                    "401": {
+                        "description": "Unathorized, missing/expired token"
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ]
+            }
+        },
+        "/book/:id": {
+            "get": {
+                "summary": "Get book by id",
+                "tags": [
+                    "Books"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "url",
+                        "description": "Id of the book",
+                        "required": true,
+                        "type": "number"
+                    },
+                    {
+                        "name": "token",
+                        "in": "header",
+                        "description": "authorization token",
+                        "required": true,
+                        "type": "string"
+                    }
+            ],
+            "responses": 
+                {
+                    "200": {
+                        "description": "OK"
+    
+                    },
+                    "401": {
+                        "description": "Invalid token"
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ]
+            }
+        },
+        "book/:id": {
+            "delete": {
+                "summary": "Delete book by id",
+                "tags": [
+                    "Books"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "url",
+                        "description": "Id of the book",
+                        "required": true,
+                        "type": "number"
+                    },
+                    {
+                        "name": "token",
+                        "in": "header",
+                        "description": "authorization token",
+                        "required": true,
+                        "type": "string"
+                    }
+            ],
+            "responses": 
+                {
+                    "200": {
+                        "description": "OK"
+    
+                    },
+                    "401": {
+                        "description": "Invalid token"
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ]
+            }
+        },
+        "book/:id/": {
+            "put": {
+                "summary": "Update book by id, only book author can edit books",
+                "tags": [
+                    "Books"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "url",
+                        "description": "Id of the book",
+                        "required": true,
+                        "type": "number"
+                    },
+                    {
+                        "name": "token",
+                        "in": "header",
+                        "description": "authorization token",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "Fields available to update",
+                        "in": "body",
+                        "description": "book model",
+                        "required": false,
+                        "schema": {
+                            "$ref": "#/definitions/createBook"
+                        }
+                }
+            ],
+            "responses": 
+                {
+                    "200": {
+                        "description": "OK"
+    
+                    },
+                    "401": {
+                        "description": "Invalid token"
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ]
+            }
+        },
+        "/book/:id/": {
+            "put": {
+                "summary": "Update book by id, only book author can edit books",
+                "tags": [
+                    "Books"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "url",
+                        "description": "Id of the book",
+                        "required": true,
+                        "type": "number"
+                    },
+                    {
+                        "name": "token",
+                        "in": "header",
+                        "description": "authorization token",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "Fields available to update",
+                        "in": "body",
+                        "description": "book model",
+                        "required": false,
+                        "schema": {
+                            "$ref": "#/definitions/createBook"
+                        }
+                }
+            ],
+            "responses": 
+                {
+                    "200": {
+                        "description": "OK"
+    
+                    },
+                    "401": {
+                        "description": "Invalid token"
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ]
+            }
+        },
+        "/book/": {
+            "get": {
+                "summary": "Get list of the books",
+                "tags": [
+                    "Books"
+                ],
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "number of the current page",
+                        "required": true,
+                        "type": "number"
+                    },
+                    {
+                        "name": "token",
+                        "in": "header",
+                        "description": "authorization token",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "results",
+                        "in": "query",
+                        "description": "Number of results per page",
+                        "required": true,
+                        "type": "number"
+                    }
+            ],
+            "responses": 
+                {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/allBooksResponse"
+                        }
+    
+                    },
+                    "401": {
+                        "description": "Invalid token"
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ]
+            }
+        }
+    },
+    "definitions": {
+        "userSignup": {
+            "example": {
+                "email": "john.smith@gmail.com",
+                "password": "Password3",
+                "firstName": "John",
+                "lastName": "Smith"
+             }
+        },
+        "signup": {
+            "message": "Success!",
+            "data": {
+                "user": {
+                    "firstName": "John",
+                    "lastName": "Smith",
+                    "email": "john.smith@gmail.com",
+                    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjYwMDAwMDAxNjMxNTM5MzcwLCJkYXRhIjp7ImlkIjoyNiwicm9sZSI6InVzZXIifSwiaWF0IjoxNjMxNTM5MzY4fQ.fmv17khIUM91D31bjcQs6CubpajBfSFRzsdv93cz9Rc"
+                }
+            }
+        },
+        "userSignin": {
+            "example": {
+                "email": "john.smith@gmail.com",
+                "password": "Password3"
+            }
+        },
+        "userSigninResponse": {
+            "example": {
+                "message": "Success!",
+                "data": {
+                    "user": {
+                        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjYwMDAwMDAxNjMxNTM5NjU2LCJkYXRhIjp7ImlkIjoyNiwicm9sZSI6InVzZXIifSwiaWF0IjoxNjMxNTM5NjU3fQ.ZNoV6v8xdxYYxV1GJAEp82h00gtJu1RC05O_L5CDMQs",
+                        "firstName": "John",
+                        "lastName": "Smith"
+                    }
+                }
+            }
+        },
+        "createBook": {
+            "example": {
+                "title": "New best book",
+                "published": 2015
+            }
+        },
+        "createBookResponse": {
+            "example": {
+                "message": "Success!",
+                "data": {
+                    "book": {
+                        "title": "New best book",
+                        "published": 2015,
+                        "authorId": 3,
+                        "id": 7
+                    }
+                }
+            }
+        },
+        "allBooksResponse": {
+            "example": {
+                "message": "Success!",
+                "data": {
+                    "books": [
+                        {
+                            "id": 1,
+                            "title": "Test",
+                            "published": 1999,
+                            "authorId": 19,
+                            "author": {
+                                "email": "antonio222@gmail.com",
+                                "lastName": "Smith",
+                                "firstName": "John"
+                            }
+                        },
+                        {
+                            "id": 5,
+                            "title": "Test22",
+                            "published": 2001,
+                            "authorId": 22,
+                            "author": {
+                                "email": "antonio2232@gmail.com",
+                                "lastName": "Test",
+                                "firstName": "Test"
+                            }
+                        },
+                        {
+                            "id": 7,
+                            "title": "Test2223",
+                            "published": 2001,
+                            "authorId": 22,
+                            "author": {
+                                "email": "antonio2242@gmail.com",
+                                "lastName": "Test",
+                                "firstName": "Test"
+                            }
+                        },
+                        {
+                            "id": 8,
+                            "title": "Test2232",
+                            "published": 2001,
+                            "authorId": 25,
+                            "author": {
+                                "email": "antonio1@gmail.com",
+                                "lastName": "Test",
+                                "firstName": "Antonio"
+                            }
+                        },
+                        {
+                            "id": 11,
+                            "title": "New best book5",
+                            "published": 2001,
+                            "authorId": 25,
+                            "author": {
+                                "email": "antonio91@gmail.com",
+                                "lastName": "Test",
+                                "firstName": "Antonio"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}

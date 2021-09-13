@@ -19,7 +19,8 @@ export const userAdapter = (): IUserAdapter => ({
             firstName: user.firstName, 
             lastName: user.lastName, 
             email: user.email, 
-            password: user.password 
+            password: user.password ,
+            role: user.role
         })
         return result;
     },

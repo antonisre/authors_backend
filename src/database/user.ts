@@ -4,11 +4,11 @@ import { ResultSetHeader } from 'mysql2';
 import { DatabaseSchemaResult } from '../types/params';
 
 export const createUser = async (user: Partial<IUser>): Promise<DatabaseSchemaResult> => {
-    const { firstName, lastName, email, password } = user;
+    let { firstName, lastName, email, password, role } = user;
 
     try {
-        const [result] = await db.query("INSERT INTO Users (firstName, lastName, email, password) VALUES(?, ?, ?, ?)", 
-            [firstName, lastName, email, password]
+        const [result] = await db.query("INSERT INTO Users (firstName, lastName, email, password, role) VALUES(?, ?, ?, ?, ?)", 
+            [firstName, lastName, email, password, role]
         );
         return result;
     } catch (err) {
