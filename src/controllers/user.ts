@@ -37,11 +37,11 @@ export const signin = async (req: Request, res: Response) => {
         const user = await userUseCases.findByEmail(newUserAdapter).execute(email);
 
         if (user.length == 0) throw { message: "User not found", statusCode: StatusCodes.NOT_FOUND };
-        if (!comparePasswords(password, user[0].password)) throw { message: "Wrong password" };
+        if (!comparePasswords(password, user[0].password)) throw { message: "Wrong password", statusCode: StatusCodes.NOT_FOUND };
      
         const token = generateToken(user[0].id, user[0].role);
 
-        successResponse(res, { data: { user: { token }}});
+        successResponse(res, { data: { user: { token, firstName: user[0].firstName, lastName: user[0].lastName }}});
     } catch (err) {
         console.log(err);
         errorResponse(res, err);
@@ -50,10 +50,10 @@ export const signin = async (req: Request, res: Response) => {
 
 export const deleteUser = async (req: Request, res: Response) => {
     try {
-        const { id } = req.params.id;
+        const { id } = req.params;
         const newUserAdapter = userAdapter();
         await userUseCases.deleteUser(newUserAdapter).execute(id);
-
+    
         successResponse(res, { data: {}});
     } catch (err) {
         console.log(err);
@@ -64,8 +64,7 @@ export const deleteUser = async (req: Request, res: Response) => {
 export const updateUser = async (req: Request, res: Response) => {
     try {
         const newUserAdapter = userAdapter();
-        const updateInfo = await userUseCases.updateUser(newUserAdapter).execute({...req.body, id: req.params.id });
-        if (updateInfo.affectedRows == 0) throw { message: "User not found!" };
+        await userUseCases.updateUser(newUserAdapter).execute({ ...req.body, id: req.params.id });
         delete req.body?.password;
 
         successResponse(res, { data: { user : { ...req.body }}});

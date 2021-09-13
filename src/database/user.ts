@@ -1,8 +1,7 @@
 import { IUser } from '../entities/user';
 import db from '../config/database';
-import { RowDataPacket, OkPacket, ResultSetHeader } from 'mysql2';
-
-type DatabaseSchemaResult = RowDataPacket[] | RowDataPacket[][] | ResultSetHeader | OkPacket[] | OkPacket;
+import { ResultSetHeader } from 'mysql2';
+import { DatabaseSchemaResult } from '../types/params';
 
 export const createUser = async (user: Partial<IUser>): Promise<DatabaseSchemaResult> => {
     const { firstName, lastName, email, password } = user;
@@ -28,16 +27,17 @@ export const findByEmail = async (email: string): Promise<DatabaseSchemaResult> 
     }
 }
 
-export const deleteUser = async (id: number): Promise<void> => {
+export const deleteUser = async (id: number): Promise<Number> => {
     try {
-        await db.query("DELETE FROM Users where id = ?", [id]);
+        const [rows] = await db.query("DELETE FROM Users where id = ?", [id]);
+        return (rows as ResultSetHeader).affectedRows;
     } catch (err) {
         console.log("Failed to delete user", err);
         throw { message: "Failed to delete user" };
     }
 }
 
-export const updateUser = async (user: Partial<IUser>) => {
+export const updateUser = async (user: Partial<IUser>): Promise<Number> => {
     try {
         const values = [];
         let query = "UPDATE Users SET "
@@ -53,7 +53,7 @@ export const updateUser = async (user: Partial<IUser>) => {
         values.push(user.id);
      
         const [rows] = await db.query(query, values);
-        return rows;
+        return (rows as ResultSetHeader).affectedRows;
     } catch (err) {
         console.log("Failed to update user", err);
         throw { message: "Failed to update user" };

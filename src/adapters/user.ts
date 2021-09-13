@@ -1,6 +1,7 @@
 import { IUser } from '../entities/user';
 import * as userDB from '../database/user';
 import { hashPassword } from '../utils/bcrypt';
+import { StatusCodes } from 'http-status-codes';
 
 export interface IUserAdapter {
     createUser(user: Partial<IUser>),
@@ -27,11 +28,12 @@ export const userAdapter = (): IUserAdapter => ({
         return userData;
     },
     deleteUser: async (id: number) => {
-        await userDB.deleteUser(id);
+        const deletedData = await userDB.deleteUser(id);
+        if ( deletedData == 0) throw { message: "User not found", statusCode: StatusCodes.NOT_FOUND };
     },
     updateUser: async (user: Partial<IUser>) => {
         if (user.password) user.password = hashPassword(user.password);
-        const updateInfo = await userDB.updateUser(user);
-        return updateInfo;
+        const updatedData = await userDB.updateUser(user);
+        if ( updatedData == 0) throw { message: "User not found", statusCode: StatusCodes.NOT_FOUND };
     },
 })

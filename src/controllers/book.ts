@@ -2,16 +2,17 @@ import { successResponse, errorResponse } from '../utils/responseHandler';
 import { Request, Response } from 'express';
 import { bookAdapter } from '../adapters/book';
 import bookUseCases from '../useCases/book';
-import { StatusCodes } from 'http-status-codes';
 
 export const addNewBook = async (req: Request, res: Response) => {
     try {
         const newBookAdapter = bookAdapter();
-        const newBook = await bookUseCases.newBook(newBookAdapter).execute(req.body)
+        const authorId = req.user;
+        const newBook = await bookUseCases.newBook(newBookAdapter).execute({ ...req.body, authorId });
 
         successResponse(res, { data: { book: {
             ...req.body,
-            id: newBook?.insertId
+            id: newBook?.insertId,
+            authorId
         }}});
     } catch (err) {
         console.log(err);
@@ -46,8 +47,8 @@ export const deleteBook = async (req: Request, res: Response) => {
 export const updateBook = async (req: Request, res: Response) => {
     try {
         const newBookAdapter = bookAdapter();
-        const updateInfo = await bookUseCases.updateBook(newBookAdapter).execute({...req.body, id: req.params.id });
-        if (updateInfo.affectedRows == 0) throw { message: "Book not found!" };
+        const authorId = req.user;
+        await bookUseCases.updateBook(newBookAdapter).execute({...req.body, id: req.params.id, authorId });
 
         successResponse(res, { data: { book : { ...req.body }}});
     } catch (err) {
@@ -55,3 +56,18 @@ export const updateBook = async (req: Request, res: Response) => {
         errorResponse(res, err);
     }
 }
+
+export const getAllBooks = async (req: Request, res: Response) => {
+    try {
+        const { page, results } = req.query;
+        const newBookAdapter = bookAdapter();
+
+        const books = await bookUseCases.getAllBooks(newBookAdapter).execute(page, results);
+
+        successResponse(res, { data: { books }});
+    } catch (err) {
+        console.log(err);
+        errorResponse(res, err);
+    }
+}
+
