@@ -37,15 +37,28 @@ export const findByEmail = async (email: string): Promise<DatabaseSchemaResult> 
     }
 }
 
-export const getUserBooks = async (id: number): Promise<DatabaseSchemaResult> => {
+export const getUserBooks = async (id: number, page: number, resultsPerPage: number): Promise<DatabaseSchemaResult> => {
+    const offset = (page - 1) * resultsPerPage;
+
     try {
         const [rows] = await db.query(`SELECT Users.firstName, Users.lastName, Users.email, 
             JSON_ARRAYAGG(JSON_OBJECT('id', Books.id, 'title', Books.title, 'published', Books.published)) as books 
-            FROM Users INNER JOIN Books ON Users.id = Books.authorId WHERE Users.id = ?`, [id]);
-        return rows;
+            FROM Users LEFT JOIN Books ON Users.id = Books.authorId WHERE Users.id = ? LIMIT ?, ?`, [id, offset, page]);
+        return rows[0];
     } catch (err) {
         console.log("Failed to find user", err);
         throw { message: "Failed to find user books" };
+    }
+}
+
+export const getUserBooksCount = async (id: number): Promise<number> => {
+    try {
+        const [rows] = await db.query(`SELECT COUNT(*) as bookCount FROM Users INNER JOIN Books ON Users.id = Books.authorId 
+            WHERE Users.id = ?`, [id]);
+        return rows[0].bookCount;
+    } catch (err) {
+        console.log("Failed to find user", err);
+        throw { message: "Failed to count user's books" };
     }
 }
 

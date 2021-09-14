@@ -3,5 +3,6 @@ import { deleteBook } from "./deleteBook";
 import { getBookById } from "./getBookById";
 import { updateBook } from "./updateBook";
 import { getAllBooks } from "./getAllBooks";
+import { getAllBooksCount } from "./getAllBooksCount";
 
-export default { newBook, deleteBook, getBookById, updateBook, getAllBooks };
+export default { newBook, deleteBook, getBookById, updateBook, getAllBooks, getAllBooksCount };

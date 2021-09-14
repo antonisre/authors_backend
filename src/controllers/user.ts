@@ -6,6 +6,7 @@ import { generateToken } from '../utils/tokenHandler';
 import { comparePasswords } from '../utils/bcrypt';
 import { StatusCodes } from 'http-status-codes';
 import { defaultUserRole } from '../config/constants';
+import { pagination } from '../utils/utils';
 
 export const deleteUser = async (req: Request, res: Response) => {
     try {
@@ -23,10 +24,15 @@ export const deleteUser = async (req: Request, res: Response) => {
 export const getBooks = async (req: Request, res: Response) => {
     try {
         const userId = req.user;
+        const { page, results } = req.query;
         const newUserAdapter = userAdapter();
-        const userData = await userUseCases.getUsersBooks(newUserAdapter).execute(userId);
+        
+        let userData = await userUseCases.getUsersBooks(newUserAdapter).execute(userId, page, results);
+        let bookCount = await userUseCases.getUserBooksCount(newUserAdapter).execute(userId);
+        if (!userData) userData = { books: [] };
+        const pages = pagination(page, results, bookCount)
     
-        successResponse(res, { data: { userData }});
+        successResponse(res, { data: { userData, pages }});
     } catch (err) {
         console.log(err);
         errorResponse(res, err);

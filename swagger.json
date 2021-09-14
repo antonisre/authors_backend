@@ -544,7 +544,13 @@
                                 "title": "New best book",
                                 "published": 2001
                             }
-                        ]
+                        ],
+                        "pages": {
+                            "previousPage": null,
+                            "currentPage": 1,
+                            "nextPage": 2,
+                            "lastPage": 5
+                        }
                     } 
                 }
             }
@@ -609,7 +615,13 @@
                                 "firstName": "Antonio"
                             }
                         }
-                    ]
+                    ],
+                    "pages": {
+                        "previousPage": null,
+                        "currentPage": 1,
+                        "nextPage": 2,
+                        "lastPage": 5
+                    }
                 }
             }
         }

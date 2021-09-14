@@ -25,3 +25,10 @@ export const validationUpdateUser = {
         password: Joi.string(),
     })
 }
+
+export const validationGetUsersBooks = {
+    query: Joi.object({
+        page: Joi.number().min(1).required(),
+        results: Joi.number().min(1).required(),
+    })
+}

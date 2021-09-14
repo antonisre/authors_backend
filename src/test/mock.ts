@@ -19,3 +19,7 @@ export const testPassword = "password99ww11";
 
 export const userId = 22;
 export const userRole = "user";
+
+export const currentPage = 1;
+export const resultsPerPage = 16;
+export const resultsCount = 155;

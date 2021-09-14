@@ -52,6 +52,17 @@ export const getAllBooks = async (page: number, resultsPerPage: number): Promise
     }
 }
 
+export const getAllBooksCount = async (): Promise<number> => {
+
+    try {
+        const [rows] = await db.query(`SELECT COUNT(*) as bookCount FROM Books INNER JOIN Users ON Users.id = Books.authorId`);
+        return rows[0].bookCount;
+    } catch (err) {
+        console.log("Failed to count all books", err);
+        throw { message: "Failed to count all books"};
+    }
+}
+
 export const updateBook = async (book: Partial<IBook>): Promise<number> => {
     try {
         const values = [];

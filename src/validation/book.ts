@@ -16,7 +16,7 @@ export const validationUpdateBook = {
 
 export const validationGetAllBooks = {
     query: Joi.object({
-        page: Joi.number().required(),
-        results: Joi.number().required()
+        page: Joi.number().min(1).required(),
+        results: Joi.number().min(1).required(),
     })
 }

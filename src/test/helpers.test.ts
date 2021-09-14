@@ -1,7 +1,8 @@
 import chai, { expect } from 'chai';
-import { testPassword, userId, userRole } from './mock';
+import { testPassword, userId, userRole, currentPage, resultsPerPage, resultsCount } from './mock';
 import { hashPassword, comparePasswords } from '../utils/bcrypt';
 import { generateToken, validateToken } from '../utils/tokenHandler';
+import { pagination } from '../utils/utils';
 
 
 describe('Testing password hash functions', () => {
@@ -41,4 +42,16 @@ describe('Testing token handler functions', () => {
         expect(parsedUserId).equal(userId);
         expect(parsedUserRole).equal(userRole);
       });
+});
+
+describe('Testing pagination function', () => {
+    it('it should return object with properties following properties: previousPage, currentPage, nextPage, lastPage', () => {
+        const pages = pagination(currentPage, resultsPerPage, resultsCount);
+    
+        expect(pages).to.be.an('object')
+        expect(pages).to.have.a.property('previousPage')
+        expect(pages).to.have.a.property('currentPage')
+        expect(pages).to.have.a.property('nextPage')
+        expect(pages).to.have.a.property('lastPage')
+    });
 });

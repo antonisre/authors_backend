@@ -100,7 +100,7 @@ describe('PUT /book/:id', () => {
 describe('GET /user/books', () => {
     it('It should fetch user books, return status ok(200), books should be an array', (done) => {
       chai.request(server)
-          .get(`/user/books`)
+          .get(`/user/books?page=1&results=5`)
           .set('token', userToken)
           .end((err, res) => {
                 expect(res.status).to.equal(200)

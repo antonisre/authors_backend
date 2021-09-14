@@ -8,7 +8,8 @@ export interface IUserAdapter {
     findByEmail(email: string),
     deleteUser(id: number),
     updateUser(user: Partial<IUser>),
-    getUserBooks(userId: number)
+    getUserBooks(userId: number, page: number, results: number),
+    getUserBooksCount(userId: number)
 }
 
 export const userAdapter = (): IUserAdapter => ({
@@ -33,13 +34,17 @@ export const userAdapter = (): IUserAdapter => ({
         const userData = await userDB.findByEmail(email);
         return userData;
     },
-    getUserBooks: async (userId: number) => {
-        const userBooks = await userDB.getUserBooks(userId);
-        return userBooks[0];
+    getUserBooks: async (userId: number, page: number, results: number) => {
+        const userBooks = await userDB.getUserBooks(userId, page, results);
+        return userBooks;
+    },
+    getUserBooksCount: (userId: number) => {
+        const userBooksCount = userDB.getUserBooksCount(userId);
+        return userBooksCount;
     },
     updateUser: async (user: Partial<IUser>) => {
         if (user.password) user.password = hashPassword(user.password);
         const updatedData = await userDB.updateUser(user);
         if ( updatedData == 0) throw { message: "User not found", statusCode: StatusCodes.NOT_FOUND };
-    },
+    }
 })

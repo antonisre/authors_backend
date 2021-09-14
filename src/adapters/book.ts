@@ -7,7 +7,8 @@ export interface IBookAdapter {
     findById(id: number),
     deleteBook(id: number),
     updateBook(user: Partial<IBook>),
-    getAllBooks(page: number, results: number)
+    getAllBooks(page: number, results: number),
+    getAllBokksCount()
 }
 
 export const bookAdapter = (): IBookAdapter => ({
@@ -19,20 +20,24 @@ export const bookAdapter = (): IBookAdapter => ({
         })
         return result;
     },
+    deleteBook: async (id: number) => {
+        const deleteBooks = await bookDB.deleteBook(id);
+        if (deleteBooks == 0) throw { message: "Book not found", statusCode: StatusCodes.NOT_FOUND };
+    },
     findById: async (id: number) => {
         const books = await bookDB.findById(id);
         return books;
     },
-    deleteBook: async (id: number) => {
-        const deleteBooks = await bookDB.deleteBook(id);
-        if (deleteBooks == 0) throw { message: "Book not found", statusCode: StatusCodes.NOT_FOUND };
+    getAllBooks: async (page: number, results: number) => {
+        const books = await bookDB.getAllBooks(page, results);
+        return books;
+    },
+    getAllBokksCount: async () => {
+        const bookCount = await bookDB.getAllBooksCount();
+        return bookCount;
     },
     updateBook: async (book: Partial<IBook>) => {
         const updatedBook = await bookDB.updateBook(book);
         if (updatedBook == 0 ) throw { message: "Only existing books can be updated by the authors", statusCode: StatusCodes.BAD_REQUEST };
     },
-    getAllBooks: async (page: number, results: number) => {
-        const books = await bookDB.getAllBooks(page, results);
-        return books;
-    }
 })

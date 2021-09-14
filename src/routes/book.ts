@@ -9,7 +9,7 @@ const router = express.Router();
 router.post('/', requireToken, celebrate(validationCreateBook), addNewBook);
 router.put('/:id', requireToken, celebrate(validationUpdateBook), updateBook);
 router.delete('/:id', requireToken, deleteBook);
-router.get('/', celebrate(validationGetAllBooks), requireToken, getAllBooks);
+router.get('/', requireToken, celebrate(validationGetAllBooks), getAllBooks);
 router.get('/:id', requireToken, getById);
 
 export default router;
