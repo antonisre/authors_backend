@@ -17,6 +17,16 @@ export const createBook = async (book: Partial<IBook>): Promise<DatabaseSchemaRe
     }
 }
 
+export const deleteAuthorsBooks = async (id: number): Promise<number> => {
+    try {
+        const [rows] = await db.query("DELETE FROM Books where authorId = ?", [id]);
+        return (rows as ResultSetHeader).affectedRows;
+    } catch (err) {
+        console.log("Failed to delete author's books", err);
+        throw { message: "Failed to delete author's books"};
+    }
+}
+
 export const deleteBook = async (id: number): Promise<number> => {
     try {
         const [rows] = await db.query("DELETE FROM Books where id = ?", [id]);

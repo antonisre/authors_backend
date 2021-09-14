@@ -5,6 +5,7 @@ import { StatusCodes } from 'http-status-codes';
 export interface IBookAdapter {
     createBook(user: Partial<IBook>),
     findById(id: number),
+    deleteAuthorsBooks(authorId: number),
     deleteBook(id: number),
     updateBook(user: Partial<IBook>),
     getAllBooks(page: number, results: number),
@@ -19,6 +20,10 @@ export const bookAdapter = (): IBookAdapter => ({
             authorId: book.authorId, 
         })
         return result;
+    },
+    deleteAuthorsBooks: async (authorId: number) => {
+        const deletedBooks = await bookDB.deleteAuthorsBooks(authorId);
+        if (deletedBooks == 0) throw { message: "Author not found", statusCode: StatusCodes.NOT_FOUND };
     },
     deleteBook: async (id: number) => {
         const deleteBooks = await bookDB.deleteBook(id);

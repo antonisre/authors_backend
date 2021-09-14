@@ -1,7 +1,9 @@
 import { successResponse, errorResponse } from '../utils/responseHandler';
 import { Request, Response } from 'express';
 import { userAdapter } from '../adapters/user';
+import { bookAdapter } from '../adapters/book';
 import userUseCases from '../useCases/user';
+import bookUseCases from '../useCases/book';
 import { generateToken } from '../utils/tokenHandler';
 import { comparePasswords } from '../utils/bcrypt';
 import { StatusCodes } from 'http-status-codes';
@@ -12,6 +14,9 @@ export const deleteUser = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
         const newUserAdapter = userAdapter();
+        const newBookAdapter = bookAdapter();
+
+        await bookUseCases.deleteAuthorsBooks(newBookAdapter).execute(id);
         await userUseCases.deleteUser(newUserAdapter).execute(id);
     
         successResponse(res, { data: {}});
