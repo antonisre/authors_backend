@@ -17,6 +17,16 @@ export const createUser = async (user: Partial<IUser>): Promise<DatabaseSchemaRe
     }
 }
 
+export const deleteUser = async (id: number): Promise<Number> => {
+    try {
+        const [rows] = await db.query("DELETE FROM Users where id = ?", [id]);
+        return (rows as ResultSetHeader).affectedRows;
+    } catch (err) {
+        console.log("Failed to delete user", err);
+        throw { message: "Failed to delete user" };
+    }
+}
+
 export const findByEmail = async (email: string): Promise<DatabaseSchemaResult> => {
     try {
         const [rows] = await db.query("SELECT * FROM Users where email = ?", [email]);
@@ -27,13 +37,15 @@ export const findByEmail = async (email: string): Promise<DatabaseSchemaResult> 
     }
 }
 
-export const deleteUser = async (id: number): Promise<Number> => {
+export const getUserBooks = async (id: number): Promise<DatabaseSchemaResult> => {
     try {
-        const [rows] = await db.query("DELETE FROM Users where id = ?", [id]);
-        return (rows as ResultSetHeader).affectedRows;
+        const [rows] = await db.query(`SELECT Users.firstName, Users.lastName, Users.email, 
+            JSON_ARRAYAGG(JSON_OBJECT('id', Books.id, 'title', Books.title, 'published', Books.published)) as books 
+            FROM Users INNER JOIN Books ON Users.id = Books.authorId WHERE Users.id = ?`, [id]);
+        return rows;
     } catch (err) {
-        console.log("Failed to delete user", err);
-        throw { message: "Failed to delete user" };
+        console.log("Failed to find user", err);
+        throw { message: "Failed to find user books" };
     }
 }
 

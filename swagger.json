@@ -104,7 +104,14 @@
                 ],
                 "parameters": [
                     {
-                    "name": "Delete user params",
+                        "name": "token",
+                        "in": "header",
+                        "description": "authorization token",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                    "name": "id",
                     "in": "url",
                     "description": "id of the user to delete",
                     "required": true
@@ -131,6 +138,13 @@
                     "Users"
                 ],
                 "parameters": [
+                    {
+                        "name": "token",
+                        "in": "header",
+                        "description": "authorization token",
+                        "required": true,
+                        "type": "string"
+                    },
                     {
                         "name": "User Signup",
                         "in": "body",
@@ -161,6 +175,41 @@
                 ]
             }
         },
+        "/user/books": {
+            "get": {
+                "summary": "Get users books",
+                "tags": [
+                    "Users"
+                ],
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "header",
+                        "description": "authorization token",
+                        "required": true,
+                        "type": "string"
+                    }
+            ],
+            "responses": 
+                {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/userBooks"
+                        }
+                    },
+                    "401": {
+                        "description": "Unathorized"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                },
+                "produces": [
+                    "application/json"
+                ]
+            }
+        },
         "/book": {
             "post": {
                 "summary": "Create new book API, author cannot have two same titled books",
@@ -168,6 +217,13 @@
                     "Books"
                 ],
                 "parameters": [
+                    {
+                        "name": "token",
+                        "in": "header",
+                        "description": "authorization token",
+                        "required": true,
+                        "type": "string"
+                    },
                     {
                         "name": "User Signup",
                         "in": "body",
@@ -466,6 +522,30 @@
                         "authorId": 3,
                         "id": 7
                     }
+                }
+            }
+        },
+        "userBooks": {
+            "example": {
+                "message": "Success!",
+                "data": {
+                    "userData": {
+                        "firstName": "John",
+                        "lastName": "Smith",
+                        "email": "antonio1@gmail.com",
+                        "books": [
+                            {
+                                "id": 8,
+                                "title": "Test222",
+                                "published": 2001
+                            },
+                            {
+                                "id": 11,
+                                "title": "New best book",
+                                "published": 2001
+                            }
+                        ]
+                    } 
                 }
             }
         },

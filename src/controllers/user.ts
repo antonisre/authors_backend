@@ -7,25 +7,26 @@ import { comparePasswords } from '../utils/bcrypt';
 import { StatusCodes } from 'http-status-codes';
 import { defaultUserRole } from '../config/constants';
 
-export const signup = async (req: Request, res: Response) => {
+export const deleteUser = async (req: Request, res: Response) => {
     try {
-        let { firstName, lastName, email, password, role } = req.body;
+        const { id } = req.params;
         const newUserAdapter = userAdapter();
-        if(!role) role = defaultUserRole;
+        await userUseCases.deleteUser(newUserAdapter).execute(id);
+    
+        successResponse(res, { data: {}});
+    } catch (err) {
+        console.log(err);
+        errorResponse(res, err);
+    }
+}
 
-        const existingUser = await userUseCases.findByEmail(newUserAdapter).execute(email);
-        if (existingUser.length > 0) throw { message: "Email address has already been taken", statusCode: StatusCodes.CONFLICT }
-
-        const newUser = await userUseCases.userSignup(newUserAdapter).execute({ firstName, lastName, email, password, role });
-        const token = generateToken(newUser.insertId, role);
-
-        successResponse(res, { data: { user: {
-            firstName,
-            lastName,
-            email,
-            token,
-            id: newUser.insertId
-        }}});
+export const getBooks = async (req: Request, res: Response) => {
+    try {
+        const userId = req.user;
+        const newUserAdapter = userAdapter();
+        const userData = await userUseCases.getUsersBooks(newUserAdapter).execute(userId);
+    
+        successResponse(res, { data: { userData }});
     } catch (err) {
         console.log(err);
         errorResponse(res, err);
@@ -50,13 +51,25 @@ export const signin = async (req: Request, res: Response) => {
     }
 }
 
-export const deleteUser = async (req: Request, res: Response) => {
+export const signup = async (req: Request, res: Response) => {
     try {
-        const { id } = req.params;
+        let { firstName, lastName, email, password, role } = req.body;
         const newUserAdapter = userAdapter();
-        await userUseCases.deleteUser(newUserAdapter).execute(id);
-    
-        successResponse(res, { data: {}});
+        if(!role) role = defaultUserRole;
+
+        const existingUser = await userUseCases.findByEmail(newUserAdapter).execute(email);
+        if (existingUser.length > 0) throw { message: "Email address has already been taken", statusCode: StatusCodes.CONFLICT }
+
+        const newUser = await userUseCases.userSignup(newUserAdapter).execute({ firstName, lastName, email, password, role });
+        const token = generateToken(newUser.insertId, role);
+
+        successResponse(res, { data: { user: {
+            firstName,
+            lastName,
+            email,
+            token,
+            id: newUser.insertId
+        }}});
     } catch (err) {
         console.log(err);
         errorResponse(res, err);

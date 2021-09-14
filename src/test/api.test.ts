@@ -97,6 +97,18 @@ describe('PUT /book/:id', () => {
     });
 });
 
+describe('GET /user/books', () => {
+    it('It should fetch user books, return status ok(200), books should be an array', (done) => {
+      chai.request(server)
+          .get(`/user/books`)
+          .set('token', userToken)
+          .end((err, res) => {
+                expect(res.status).to.equal(200)
+                expect(res.body.data.userData.books).to.be.an('array')
+            done();
+          });
+    });
+});
 
 describe('DELETE /book/:id', () => {
     it('It should delete test book, return status ok(200)', (done) => {

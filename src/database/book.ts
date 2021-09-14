@@ -17,16 +17,6 @@ export const createBook = async (book: Partial<IBook>): Promise<DatabaseSchemaRe
     }
 }
 
-export const findById = async (id: number): Promise<DatabaseSchemaResult> => {
-    try {
-        const [rows] = await db.query("SELECT * FROM Books where id = ?", [id]);
-        return rows;
-    } catch (err) {
-        console.log("Failed to find book", err);
-        throw { message: "Failed to find book"};
-    }
-}
-
 export const deleteBook = async (id: number): Promise<number> => {
     try {
         const [rows] = await db.query("DELETE FROM Books where id = ?", [id]);
@@ -34,6 +24,16 @@ export const deleteBook = async (id: number): Promise<number> => {
     } catch (err) {
         console.log("Failed to delete book", err);
         throw { message: "Failed to delete book"};
+    }
+}
+
+export const findById = async (id: number): Promise<DatabaseSchemaResult> => {
+    try {
+        const [rows] = await db.query("SELECT * FROM Books where id = ?", [id]);
+        return rows;
+    } catch (err) {
+        console.log("Failed to find book", err);
+        throw { message: "Failed to find book"};
     }
 }
 
