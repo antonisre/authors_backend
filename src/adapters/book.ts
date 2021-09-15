@@ -22,8 +22,7 @@ export const bookAdapter = (): IBookAdapter => ({
         return result;
     },
     deleteAuthorsBooks: async (authorId: number) => {
-        const deletedBooks = await bookDB.deleteAuthorsBooks(authorId);
-        if (deletedBooks == 0) throw { message: "Author not found", statusCode: StatusCodes.NOT_FOUND };
+        await bookDB.deleteAuthorsBooks(authorId);
     },
     deleteBook: async (id: number) => {
         const deleteBooks = await bookDB.deleteBook(id);

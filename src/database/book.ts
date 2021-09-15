@@ -52,7 +52,7 @@ export const getAllBooks = async (page: number, resultsPerPage: number): Promise
 
     try {
         const [rows] = await db.query(`SELECT Books.*, JSON_OBJECT('firstName', Users.firstName, 'lastName', Users.lastName, 
-            'email', Users.email) as author FROM Books INNER JOIN Users ON Users.id = Books.authorId LIMIT ?, ?`, 
+            'email', Users.email, 'role', Users.role) as author FROM Books INNER JOIN Users ON Users.id = Books.authorId LIMIT ?, ?`, 
             [offset, resultsPerPage]
         );
         return rows;

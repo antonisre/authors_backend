@@ -9,8 +9,8 @@ export const validationCreateBook = {
 
 export const validationUpdateBook = {
     body: Joi.object({
-        title: Joi.string(),
-        published: Joi.number(),
+        title: Joi.string().optional(),
+        published: Joi.number().optional(),
     })
 }
 

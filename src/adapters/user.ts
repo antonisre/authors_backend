@@ -8,6 +8,8 @@ export interface IUserAdapter {
     findByEmail(email: string),
     deleteUser(id: number),
     updateUser(user: Partial<IUser>),
+    getAllUsers(page: number, results: number),
+    getAllUsersCount(),
     getUserBooks(userId: number, page: number, results: number),
     getUserBooksCount(userId: number)
 }
@@ -33,6 +35,14 @@ export const userAdapter = (): IUserAdapter => ({
     findByEmail: async (email: string) => {
         const userData = await userDB.findByEmail(email);
         return userData;
+    },
+    getAllUsers: async (page: number, results: number) => {
+        const users = await userDB.getAllUsers(page, results);
+        return users;
+    },
+    getAllUsersCount: async () => {
+        const userCount = await userDB.getAllUsersCount();
+        return userCount;
     },
     getUserBooks: async (userId: number, page: number, results: number) => {
         const userBooks = await userDB.getUserBooks(userId, page, results);

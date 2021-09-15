@@ -20,6 +20,6 @@ export const errorResponse = (response: Response, error: ResponseData): Response
     if (!message || message == "") message = "Something went wrong!";
 
     return response.status(statusCode).json({
-        message
+        errorMessage: message
     })
 }

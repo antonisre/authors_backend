@@ -1,1 +1,5 @@
-export const defaultUserRole = "user";
+export const userRoles = {
+    admin: 1,
+    user: 2
+}
+

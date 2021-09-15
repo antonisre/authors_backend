@@ -7,7 +7,7 @@ import bookUseCases from '../useCases/book';
 import { generateToken } from '../utils/tokenHandler';
 import { comparePasswords } from '../utils/bcrypt';
 import { StatusCodes } from 'http-status-codes';
-import { defaultUserRole } from '../config/constants';
+import { userRoles } from '../config/constants';
 import { pagination } from '../utils/utils';
 
 export const deleteUser = async (req: Request, res: Response) => {
@@ -20,6 +20,24 @@ export const deleteUser = async (req: Request, res: Response) => {
         await userUseCases.deleteUser(newUserAdapter).execute(id);
     
         successResponse(res, { data: {}});
+    } catch (err) {
+        console.log(err);
+        errorResponse(res, err);
+    }
+}
+
+export const getAll = async (req: Request, res: Response) => {
+    try {
+        const { page, results } = req.query;
+        const newUserAdapter = userAdapter();
+        
+        let userData = await userUseCases.getAllUsers(newUserAdapter).execute(page, results);
+        let userCount = await userUseCases.getUsersCount(newUserAdapter).execute();
+        
+        if (!userData) userData = { users: [] };
+        const pages = pagination(page, results, userCount)
+    
+        successResponse(res, { data: { userData, pages }});
     } catch (err) {
         console.log(err);
         errorResponse(res, err);
@@ -55,7 +73,13 @@ export const signin = async (req: Request, res: Response) => {
      
         const token = generateToken(user[0].id, user[0].role);
 
-        successResponse(res, { data: { user: { token, firstName: user[0].firstName, lastName: user[0].lastName }}});
+        successResponse(res, { data: { user: { 
+            token, 
+            firstName: user[0].firstName, 
+            lastName: user[0].lastName,
+            id: user[0].id,
+            role: user[0].role,
+        }}});
     } catch (err) {
         console.log(err);
         errorResponse(res, err);
@@ -66,7 +90,7 @@ export const signup = async (req: Request, res: Response) => {
     try {
         let { firstName, lastName, email, password, role } = req.body;
         const newUserAdapter = userAdapter();
-        if(!role) role = defaultUserRole;
+        if(!role) role = userRoles.user;
 
         const existingUser = await userUseCases.findByEmail(newUserAdapter).execute(email);
         if (existingUser.length > 0) throw { message: "Email address has already been taken", statusCode: StatusCodes.CONFLICT }
@@ -79,6 +103,7 @@ export const signup = async (req: Request, res: Response) => {
             lastName,
             email,
             token,
+            role,
             id: newUser.insertId
         }}});
     } catch (err) {

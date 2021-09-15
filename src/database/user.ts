@@ -37,13 +37,36 @@ export const findByEmail = async (email: string): Promise<DatabaseSchemaResult> 
     }
 }
 
+export const getAllUsers = async (page: number, resultsPerPage: number): Promise<DatabaseSchemaResult> => {
+    const offset = (page - 1) * resultsPerPage;
+    
+    try {
+        const [rows] = await db.query(`SELECT Users.firstName, Users.lastName, Users.email, Users.role, Users.id FROM Users
+            LIMIT ?, ?`, [offset, resultsPerPage]);
+        return rows;
+    } catch (err) {
+        console.log("Failed to find all users", err);
+        throw { message: "Failed to find all users" };
+    }
+}
+
+export const getAllUsersCount = async (): Promise<number> => {
+    try {
+        const [rows] = await db.query("SELECT COUNT(*) as usersCount FROM Users");
+        return rows[0].usersCount;
+    } catch (err) {
+        console.log("Failed to find user count", err);
+        throw { message: "Failed to find user count" };
+    }
+}
+
 export const getUserBooks = async (id: number, page: number, resultsPerPage: number): Promise<DatabaseSchemaResult> => {
     const offset = (page - 1) * resultsPerPage;
-
+    console.log(id, offset, resultsPerPage)
     try {
-        const [rows] = await db.query(`SELECT Users.firstName, Users.lastName, Users.email, 
-            JSON_ARRAYAGG(JSON_OBJECT('id', Books.id, 'title', Books.title, 'published', Books.published)) as books 
-            FROM Users LEFT JOIN Books ON Users.id = Books.authorId WHERE Users.id = ? LIMIT ?, ?`, [id, offset, page]);
+        const [rows] = await db.query(`SELECT *, JSON_ARRAYAGG(JSON_OBJECT('id', b.id, 'title', b.title, 'published', b.published)) as books
+        FROM (select * from Books LIMIT ?, ?) b LEFT join Users u on u.id = b.authorId where b.authorId = ?;`, 
+        [offset, resultsPerPage, id]);
         return rows[0];
     } catch (err) {
         console.log("Failed to find user", err);
@@ -67,7 +90,7 @@ export const updateUser = async (user: Partial<IUser>): Promise<Number> => {
         const values = [];
         let query = "UPDATE Users SET "
         Object.keys(user).forEach(key => {
-            if (key !== "id" ) {
+            if (key !== "id" && user[key]) {
                 query = query + `${key} = ?,`
                 values.push(user[key])
             }
