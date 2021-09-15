@@ -15,10 +15,10 @@
 #### Install all dependencies with npm install
 #### run server with npm start
 
-### all APIs are documented under /api-docs route
+#### all APIs are documented under /api-docs route
 
-### db migrations can be found under src/migrations
+#### db migrations can be found under src/migrations
 
 
-## test are placed inside test folder and can be simply started with "npm test"
+#### test are placed inside test folder and can be simply started with "npm test"
 
